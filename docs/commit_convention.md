@@ -53,7 +53,7 @@ Utilize a tabela abaixo para escolher o `emoji` e o `type` apropriados para sua 
     <tr>
       <td>Adicionando uma dependência</td>
       <td>➕ <code>:heavy_plus_sign:</code></td>
-      <td><code>component</code></td>
+      <td><code>dependency</code></td>
     </tr>
     <tr>
       <td>Alterações de revisão de código</td>
@@ -61,7 +61,7 @@ Utilize a tabela abaixo para escolher o `emoji` e o `type` apropriados para sua 
       <td><code>style</code></td>
     </tr>
     <tr>
-      <td>Animações, transições e assets</td>
+      <td>Animações, transições, assets e novos componentes</td>
       <td>💫 <code>:dizzy:</code></td>
       <td><code>assets</code></td>
     </tr>
