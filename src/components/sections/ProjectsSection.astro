@@ -1,0 +1,62 @@
+---
+import ProjectCard from "../react/ProjectCard.tsx";
+
+const projects = [
+    {
+        title: "Projeto 1",
+        description:
+            "Descrição breve do seu primeiro projeto. Explique o problema que resolve e as tecnologias utilizadas.",
+        tags: ["React", "TypeScript", "Node.js"],
+        link: "#",
+    },
+    {
+        title: "Projeto 2",
+        description:
+            "Descrição breve do seu segundo projeto. Destaque os desafios superados e resultados alcançados.",
+        tags: ["React Native", "Expo", "Firebase"],
+        link: "#",
+    },
+    {
+        title: "Projeto 3",
+        description:
+            "Descrição breve do seu terceiro projeto. Mostre o impacto e as lições aprendidas.",
+        tags: ["Astro", "Tailwind", "Vercel"],
+        link: "#",
+    },
+];
+---
+
+<section id="projects" class="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Heading -->
+        <div class="mb-16 text-center">
+            <span
+                class="text-primary font-mono text-sm tracking-wider uppercase"
+                >Portfolio</span
+            >
+            <h2
+                class="text-3xl sm:text-4xl md:text-5xl font-bold mt-2 text-foreground"
+            >
+                Projetos em destaque<span class="text-primary">.</span>
+            </h2>
+            <p class="text-muted-foreground mt-4 max-w-xl mx-auto">
+                Alguns dos projetos que desenvolvi recentemente
+            </p>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {
+                projects.map((project) => (
+                    <ProjectCard
+                        client:visible
+                        title={project.title}
+                        description={project.description}
+                        tags={project.tags}
+                        link={project.link}
+                    />
+                ))
+            }
+        </div>
+    </div>
+</section>
