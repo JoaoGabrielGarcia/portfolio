@@ -1,20 +1,110 @@
 ---
+import { Image } from "astro:assets";
+import typescriptIcon from "../../assets/typescript-icon.svg";
+import javascriptIcon from "../../assets/javascript.svg";
+import reactIcon from "../../assets/react.svg";
+import nextjsIcon from "../../assets/nextjs-icon.svg";
+import nodejsIcon from "../../assets/nodejs-icon.svg";
+import astroIcon from "../../assets/astro-icon.svg";
+import tailwindIcon from "../../assets/tailwindcss-icon.svg";
+import dockerIcon from "../../assets/docker-icon.svg";
+import pythonIcon from "../../assets/python.svg";
+import javaIcon from "../../assets/java.svg";
+import flutterIcon from "../../assets/flutter.svg";
+import dartIcon from "../../assets/dart.svg";
+import figmaIcon from "../../assets/figma.svg";
+import firebaseIcon from "../../assets/firebase-icon.svg";
+import supabaseIcon from "../../assets/supabase-icon.svg";
+import mongodbIcon from "../../assets/mongodb-icon.svg";
+import postgresqlIcon from "../../assets/postgresql.svg";
+import mysqlIcon from "../../assets/mysql.svg";
+import redisIcon from "../../assets/redis (1).svg";
+import cssIcon from "../../assets/css-3.svg";
+import htmlIcon from "../../assets/html-5.svg";
+import nestjsIcon from "../../assets/nestjs (1).svg";
+import flaskIcon from "../../assets/flask.svg";
+import springIcon from "../../assets/spring-icon.svg";
+import viteIcon from "../../assets/vitejs.svg";
+import remixIcon from "../../assets/remix-icon.svg";
+import bunIcon from "../../assets/bun.svg";
+import chartjsIcon from "../../assets/chartjs.svg";
+import zodIcon from "../../assets/zod.svg";
+import insomniaIcon from "../../assets/insomnia.svg";
+import postmanIcon from "../../assets/postman-icon.svg";
+import jiraIcon from "../../assets/jira.svg";
+import confluenceIcon from "../../assets/confluence.svg";
+import bitbucketIcon from "../../assets/bitbucket.svg";
+import atlassianIcon from "../../assets/atlassian.svg";
+import miroIcon from "../../assets/miro-icon.svg";
+import photoshopIcon from "../../assets/adobe-photoshop.svg";
+import playconsoleIcon from "../../assets/google-play-console-icon.svg";
+import vercelIcon from "../../assets/vercel-icon.svg";
+import profileImg from "../../assets/perfil.jpg";
+import InteractiveSkill from "../react/InteractiveSkill.tsx";
+
 const skills = [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "React Native",
-    "Node.js",
-    "Astro",
-    "Tailwind CSS",
-    "Git",
+    // Languages
+    { name: "JavaScript", icon: javascriptIcon },
+    { name: "TypeScript", icon: typescriptIcon },
+    { name: "Python", icon: pythonIcon },
+    { name: "Java", icon: javaIcon },
+    { name: "Dart", icon: dartIcon },
+
+    // Frontend
+    { name: "HTML5", icon: htmlIcon },
+    { name: "CSS3", icon: cssIcon },
+    { name: "React", icon: reactIcon },
+    { name: "Next.js", icon: nextjsIcon },
+    { name: "Astro", icon: astroIcon },
+    { name: "Remix", icon: remixIcon },
+    { name: "Tailwind CSS", icon: tailwindIcon },
+    { name: "Vite", icon: viteIcon },
+
+    // Mobile
+    { name: "React Native", icon: reactIcon },
+    { name: "Flutter", icon: flutterIcon },
+
+    // Backend
+    { name: "Node.js", icon: nodejsIcon },
+    { name: "Nest.js", icon: nestjsIcon },
+    { name: "Bun", icon: bunIcon },
+    { name: "Spring Boot", icon: springIcon },
+    { name: "Flask", icon: flaskIcon },
+
+    // Databases & BaaS
+    { name: "PostgreSQL", icon: postgresqlIcon },
+    { name: "MySQL", icon: mysqlIcon },
+    { name: "MongoDB", icon: mongodbIcon },
+    { name: "Redis", icon: redisIcon },
+    { name: "Firebase", icon: firebaseIcon },
+    { name: "Supabase", icon: supabaseIcon },
+
+    // API & Tools
+    { name: "Postman", icon: postmanIcon },
+    { name: "Insomnia", icon: insomniaIcon },
+    { name: "Zod", icon: zodIcon },
+    { name: "Chart.js", icon: chartjsIcon },
+
+    // DevOps & Infrastructure
+    { name: "Docker", icon: dockerIcon },
+    { name: "Vercel", icon: vercelIcon },
+    { name: "Google Play", icon: playconsoleIcon },
+
+    // Design & Product Management
+    { name: "Figma", icon: figmaIcon },
+    { name: "Photoshop", icon: photoshopIcon },
+    { name: "Miro", icon: miroIcon },
+    { name: "Jira", icon: jiraIcon },
+    { name: "Confluence", icon: confluenceIcon },
+    { name: "Atlassian", icon: atlassianIcon },
+    { name: "Bitbucket", icon: bitbucketIcon },
 ];
 ---
 
 <!-- Overlay that hides the shader behind About section -->
 <div class="relative">
     <!-- Top gradient: transparent → solid (shader fades out) -->
-    <div class="h-32 bg-gradient-to-b from-transparent to-background"></div>
+    <div class="h-32 bg-linear-to-b from-transparent to-background"></div>
 
     <section
         id="about"
@@ -49,8 +139,9 @@ const skills = [
                     <p
                         class="text-muted-foreground text-base sm:text-lg leading-relaxed"
                     >
-                        Atualmente focado em criar experiências digitais que
-                        combinam design elegante com performance excepcional.
+                        Atualmente focado em criar e gerenciar soluções digitais
+                        que combinam performance e designs elegantes,
+                        proporcionando experiências excepcionais aos usuários.
                         Sempre buscando aprender novas tecnologias e evoluir
                         como profissional.
                     </p>
@@ -62,12 +153,14 @@ const skills = [
                         >
                             Tecnologias
                         </h3>
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-3">
                             {
                                 skills.map((skill) => (
-                                    <span class="px-3 py-1.5 text-xs sm:text-sm font-medium bg-card border border-border rounded-lg text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors cursor-default">
-                                        {skill}
-                                    </span>
+                                    <InteractiveSkill
+                                        client:load
+                                        name={skill.name}
+                                        iconSrc={skill.icon.src}
+                                    />
                                 ))
                             }
                         </div>
@@ -78,18 +171,13 @@ const skills = [
                 <div class="flex justify-center">
                     <div class="relative">
                         <div
-                            class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-border flex items-center justify-center overflow-hidden"
+                            class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 border border-border flex items-center justify-center overflow-hidden"
                         >
-                            <div class="text-center p-6">
-                                <div
-                                    class="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center"
-                                >
-                                    <span class="text-3xl">👨‍💻</span>
-                                </div>
-                                <p class="text-muted-foreground text-sm">
-                                    Sua foto aqui
-                                </p>
-                            </div>
+                            <Image
+                                src={profileImg}
+                                alt="João Gabriel"
+                                class="w-full h-full object-cover transition-all duration-500 hover:scale-105"
+                            />
                         </div>
                         <!-- Decorative element -->
                         <div
@@ -103,5 +191,5 @@ const skills = [
     </section>
 
     <!-- Bottom gradient: solid → transparent (shader fades back in for Projects) -->
-    <div class="h-32 bg-gradient-to-b from-background to-transparent"></div>
+    <div class="h-32 bg-linear-to-b from-background to-transparent"></div>
 </div>
