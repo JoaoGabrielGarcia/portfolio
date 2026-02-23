@@ -98,7 +98,8 @@ const GlowingEffect = memo(
     );
 
     useEffect(() => {
-      if (disabled) return;
+      const isMobile = window.innerWidth < 768;
+      if (disabled || isMobile) return;
 
       const handleScroll = () => handleMove();
       const handlePointerMove = (e: PointerEvent) => handleMove(e);
