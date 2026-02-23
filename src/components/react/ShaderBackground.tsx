@@ -1,31 +1,46 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export default function ShaderBackground() {
-    const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
 
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
+    // Add a small delay to avoid fighting with initial renders
+    const timeoutId = setTimeout(checkMobile, 100);
 
-        const material = new THREE.ShaderMaterial({
-            uniforms: {
-                iTime: { value: 0 },
-                iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-            },
-            vertexShader: `
+    window.addEventListener('resize', checkMobile);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || isMobile) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+      },
+      vertexShader: `
         void main() {
           gl_Position = vec4(position, 1.0);
         }
       `,
-            fragmentShader: `
+      fragmentShader: `
         uniform float iTime;
         uniform vec2 iResolution;
 
@@ -85,44 +100,73 @@ export default function ShaderBackground() {
           gl_FragColor = o * 1.5;
         }
       `
-        });
+    });
 
-        const geometry = new THREE.PlaneGeometry(2, 2);
-        const mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
 
-        let frameId: number;
-        const animate = () => {
-            material.uniforms.iTime.value += 0.016;
-            renderer.render(scene, camera);
-            frameId = requestAnimationFrame(animate);
-        };
-        animate();
+    let frameId: number;
+    const animate = () => {
+      material.uniforms.iTime.value += 0.016;
+      renderer.render(scene, camera);
+      frameId = requestAnimationFrame(animate);
+    };
+    animate();
 
-        const handleResize = () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
-        };
-        window.addEventListener('resize', handleResize);
+    const handleResize = () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
 
-        return () => {
-            cancelAnimationFrame(frameId);
-            window.removeEventListener('resize', handleResize);
-            if (container.contains(renderer.domElement)) {
-                container.removeChild(renderer.domElement);
-            }
-            geometry.dispose();
-            material.dispose();
-            renderer.dispose();
-        };
-    }, []);
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener('resize', handleResize);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+    };
+  }, [isMobile]);
 
-    return (
+  return (
+    <>
+      {isMobile ? (
         <div
-            ref={containerRef}
-            className="fixed inset-0 w-full h-full -z-10"
-            aria-hidden="true"
-            style={{ pointerEvents: 'none' }}
+          className="fixed inset-0 w-full h-full -z-10 bg-background overflow-hidden"
+          aria-hidden="true"
+          style={{ pointerEvents: 'none' }}
+        >
+          {/* Radial glows mimicking the aurora colors */}
+          <div className="absolute inset-0 opacity-60 dark:opacity-40">
+            {/* Violet top left */}
+            <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.3)_0%,transparent_60%)]" />
+
+            {/* Teal top right */}
+            <div className="absolute top-[20%] right-[-20%] w-[60%] h-[80%] bg-[radial-gradient(circle_at_center,rgba(45,212,191,0.25)_0%,transparent_60%)]" />
+
+            {/* Blue bottom left */}
+            <div className="absolute bottom-[-10%] left-[10%] w-[80%] h-[60%] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.3)_0%,transparent_60%)]" />
+          </div>
+
+          {/* Diagonal falling streaks to match the "falling lines" aesthetic */}
+          <div className="absolute inset-0 opacity-40 dark:opacity-30">
+            <div className="absolute top-[10%] left-[-20%] w-[200%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent -rotate-45 transform-gpu" />
+            <div className="absolute top-[40%] left-[-30%] w-[200%] h-[1px] bg-gradient-to-r from-transparent via-teal-400/40 to-transparent -rotate-45 transform-gpu" />
+            <div className="absolute top-[70%] left-[10%] w-[200%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent -rotate-45 transform-gpu" />
+          </div>
+        </div>
+      ) : (
+        <div
+          ref={containerRef}
+          className="fixed inset-0 w-full h-full -z-10"
+          aria-hidden="true"
+          style={{ pointerEvents: 'none' }}
         />
-    );
+      )}
+    </>
+  );
 }
