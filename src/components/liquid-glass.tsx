@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // Types
 interface GlassEffectProps {
@@ -19,6 +19,20 @@ export const GlassEffect: React.FC<GlassEffectProps> = ({
   href,
   target = "_blank",
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Set initial value
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const glassStyle = {
     boxShadow: "0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1)",
     transitionTimingFunction: "cubic-bezier(0.175, 0.885, 0.32, 2.2)",
@@ -34,8 +48,8 @@ export const GlassEffect: React.FC<GlassEffectProps> = ({
       <div
         className="absolute inset-0 z-0 overflow-hidden rounded-inherit rounded-3xl"
         style={{
-          backdropFilter: "blur(3px)",
-          filter: "url(#glass-distortion)",
+          backdropFilter: isMobile ? "blur(10px)" : "blur(3px)",
+          filter: isMobile ? "none" : "url(#glass-distortion)",
           isolation: "isolate",
         }}
       />
