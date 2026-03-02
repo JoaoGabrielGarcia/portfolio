@@ -226,7 +226,7 @@ export default function RadialOrbitalTimeline({
 
                 <div
                   className={`
-                  absolute top-12  whitespace-nowrap
+                  absolute top-14  whitespace-nowrap
                   text-xs font-semibold tracking-wider
                   transition-all duration-300
                   ${isExpanded ? "text-foreground scale-125" : "text-muted-foreground"}
@@ -236,7 +236,7 @@ export default function RadialOrbitalTimeline({
                 </div>
 
                 {isExpanded && (
-                  <Card className="absolute top-20 left-1/2 -translate-x-1/2 w-64 bg-card/95 backdrop-blur-lg border-border shadow-xl shadow-foreground/5 overflow-visible">
+                  <Card className="absolute top-20 left-1/2 -translate-x-1/2 w-72 bg-card/95 backdrop-blur-lg border-border shadow-xl shadow-foreground/5 overflow-visible">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-border"></div>
                     <CardHeader className="pb-2">
                       {item.tags.length > 0 && (
