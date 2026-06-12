@@ -11,7 +11,6 @@ interface Project {
     isLogo?: boolean;
 }
 
-const VISIBLE = 3;
 const GAP = 24; // px — matches gap-6
 const DURATION = 480; // ms
 
@@ -19,58 +18,48 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
     const n = projects.length;
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Index of the leftmost VISIBLE card (modular, so infinite)
+    // 1 card on mobile (<640px), 3 on desktop
+    const [visibleCount, setVisibleCount] = useState(3);
     const [startIdx, setStartIdx] = useState(0);
     const [animating, setAnimating] = useState(false);
-
-    // Track position & transition
     const [translateX, setTranslateX] = useState(0);
     const [withTransition, setWithTransition] = useState(false);
-
-    // Opacity for hidden edge slots (0 = slot 0, 4 = slot 4)
     const [leftOp, setLeftOp] = useState(0);
     const [rightOp, setRightOp] = useState(0);
     const [opTransition, setOpTransition] = useState(false);
 
-    // --- helpers ---
     const mod = useCallback((i: number) => ((i % n) + n) % n, [n]);
 
-    // We always render 5 slots:
-    // [startIdx-1] [startIdx] [startIdx+1] [startIdx+2] [startIdx+3]
-    //  ← hidden                 visible (3)                hidden →
-    const slots = [
-        mod(startIdx - 1),
-        mod(startIdx),
-        mod(startIdx + 1),
-        mod(startIdx + 2),
-        mod(startIdx + 3),
-    ];
-
-    /** pixel width of one card */
-    const cardWidth = useCallback(() => {
+    // --- geometry helpers (accept vc to avoid stale closure) ---
+    const getCardWidth = useCallback((vc: number) => {
         if (!containerRef.current) return 0;
-        return (containerRef.current.offsetWidth - GAP * (VISIBLE - 1)) / VISIBLE;
+        return (containerRef.current.offsetWidth - GAP * (vc - 1)) / vc;
     }, []);
 
-    /** one step = card + gap */
-    const stepWidth = useCallback(() => cardWidth() + GAP, [cardWidth]);
+    const getStep = useCallback(
+        (vc: number) => getCardWidth(vc) + GAP,
+        [getCardWidth]
+    );
 
-    /** baseline translateX so that slot 0 is hidden and slots 1‑3 are visible */
-    const baseTranslate = useCallback(() => -stepWidth(), [stepWidth]);
+    const getBase = useCallback(
+        (vc: number) => -getStep(vc),
+        [getStep]
+    );
 
-    // Set initial position once container is measured
+    // --- responsive visible count ---
     useEffect(() => {
-        setTranslateX(baseTranslate());
-    }, [baseTranslate]);
+        const update = () => setVisibleCount(window.innerWidth < 640 ? 1 : 3);
+        update();
+        window.addEventListener("resize", update);
+        return () => window.removeEventListener("resize", update);
+    }, []);
 
-    // Recalculate on resize (only when idle)
+    // Recalculate baseline translateX when visibleCount or container changes
     useEffect(() => {
-        const onResize = () => {
-            if (!animating) setTranslateX(baseTranslate());
-        };
-        window.addEventListener("resize", onResize);
-        return () => window.removeEventListener("resize", onResize);
-    }, [animating, baseTranslate]);
+        if (containerRef.current && !animating) {
+            setTranslateX(getBase(visibleCount));
+        }
+    }, [visibleCount, getBase, animating]);
 
     // --- navigation ---
     const navigate = useCallback(
@@ -78,30 +67,36 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
             if (animating) return;
             setAnimating(true);
 
-            const base = baseTranslate(); // capture now
-            const step = stepWidth();
+            const vc = visibleCount;
+            const base = getBase(vc);
+            const step = getStep(vc);
 
-            // Activate CSS transitions first, then change values in same render
-            // so the browser sees: opacity 0→1 (or 1→0) with transition active
+            // Fade in the entering edge card
             setOpTransition(true);
-            if (dir === 1) setRightOp(1); // right hidden card fades in
-            else setLeftOp(1);            // left hidden card fades in
+            if (dir === 1) setRightOp(1);
+            else setLeftOp(1);
 
+            // Slide the track
             setWithTransition(true);
-            setTranslateX(base - dir * step); // slide track by one step
+            setTranslateX(base - dir * step);
 
             setTimeout(() => {
-                // Batch: update index + instant position reset + clear opacity
                 setStartIdx((s) => mod(s + dir));
                 setWithTransition(false);
-                setTranslateX(base); // snap back (no transition)
+                setTranslateX(base); // instant snap-back (no transition)
                 setOpTransition(false);
                 setLeftOp(0);
                 setRightOp(0);
                 setAnimating(false);
             }, DURATION);
         },
-        [animating, baseTranslate, stepWidth, mod]
+        [animating, visibleCount, getBase, getStep, mod]
+    );
+
+    // --- slots: visibleCount + 2 (1 hidden on each side) ---
+    const totalSlots = visibleCount + 2;
+    const slots = Array.from({ length: totalSlots }, (_, i) =>
+        mod(startIdx - 1 + i)
     );
 
     // --- styles ---
@@ -116,19 +111,23 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
     };
 
     const slotStyle = (slotIdx: number): React.CSSProperties => ({
-        // Each slot takes exactly 1/3 of the container (accounting for gaps)
-        flex: `0 0 calc((100% - ${GAP * (VISIBLE - 1)}px) / ${VISIBLE})`,
-        opacity: slotIdx === 0 ? leftOp : slotIdx === 4 ? rightOp : 1,
+        // Each slot = 1/visibleCount of the container width (minus gaps)
+        flex: `0 0 calc((100% - ${GAP * (visibleCount - 1)}px) / ${visibleCount})`,
+        opacity:
+            slotIdx === 0
+                ? leftOp
+                : slotIdx === visibleCount + 1
+                ? rightOp
+                : 1,
         transition: opTransition ? `opacity ${DURATION}ms ease` : "none",
     });
 
     return (
         <div className="relative w-full select-none">
-            {/* ── Carousel track ── */}
+            {/* ── Track ── */}
             <div ref={containerRef} className="overflow-hidden w-full">
                 <div style={trackStyle}>
                     {slots.map((projectIdx, slotIdx) => (
-                        // key by slotIdx (not project) so React reuses DOM nodes on index update
                         <div key={slotIdx} style={slotStyle(slotIdx)}>
                             <ProjectCard {...projects[projectIdx]} />
                         </div>
@@ -150,16 +149,14 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
                     </svg>
                 </button>
 
-                {/* Dots — one per window position (n total) */}
+                {/* Dots */}
                 <div className="flex items-center gap-2">
                     {Array.from({ length: n }).map((_, i) => (
                         <div
                             key={i}
                             style={{ transition: "all 0.35s ease" }}
                             className={`rounded-full h-2 ${
-                                i === startIdx
-                                    ? "w-6 bg-primary"
-                                    : "w-2 bg-white/20"
+                                i === startIdx ? "w-6 bg-primary" : "w-2 bg-white/20"
                             }`}
                         />
                     ))}
