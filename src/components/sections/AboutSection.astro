@@ -42,6 +42,7 @@ import vercelIcon from "../../assets/vercel-icon.svg";
 import profileImg from "../../assets/perfil.jpg";
 import InteractiveSkill from "../react/InteractiveSkill.tsx";
 import SoftSkillsTimeline from "../react/SoftSkillsTimeline.tsx";
+import ExperienceTimeline from "../react/ExperienceTimeline.tsx";
 
 const skills = [
     // Languages
@@ -169,22 +170,35 @@ const skills = [
                 </div>
 
                 <!-- Avatar / Image placeholder -->
-                <div class="flex justify-center">
-                    <div class="relative">
-                        <div
-                            class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 border border-border flex items-center justify-center overflow-hidden"
-                        >
-                            <Image
-                                src={profileImg}
-                                alt="João Gabriel"
-                                class="w-full h-full object-cover transition-all duration-500 hover:scale-105"
-                            />
+                <div class="flex flex-col justify-center">
+                    <div class="flex justify-center mb-8">
+                        <div class="relative">
+                            <div
+                                class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 border border-border flex items-center justify-center overflow-hidden"
+                            >
+                                <Image
+                                    src={profileImg}
+                                    alt="João Gabriel"
+                                    class="w-full h-full object-cover transition-all duration-500 hover:scale-105"
+                                />
+                            </div>
+                            <!-- Decorative element -->
+                            <div
+                                class="absolute -z-10 -bottom-4 -right-4 w-full h-full rounded-2xl border border-primary/20"
+                            >
+                            </div>
                         </div>
-                        <!-- Decorative element -->
-                        <div
-                            class="absolute -z-10 -bottom-4 -right-4 w-full h-full rounded-2xl border border-primary/20"
+                    </div>
+                    <div class="">
+                        <p
+                            class="text-muted-foreground text-base italic sm:text-lg leading-relaxed"
                         >
-                        </div>
+                            Meu nome é <span class="text-primary"
+                                >João Gabriel</span
+                            >, universitário na FATEC São José dos Campos -
+                            Prof. Jessen Vidal, atualmente cursando
+                            Desenvolvimento de software multiplataforma.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -196,10 +210,15 @@ const skills = [
                     Soft Skills
                 </h3>
                 <div
-                    class="w-full h-[500px] md:h-[600px] rounded-2xl overflow-hidden"
+                    class="w-full h-[650px] md:h-[600px] rounded-2xl overflow-hidden"
                 >
                     <SoftSkillsTimeline client:load />
                 </div>
+            </div>
+
+            <!-- Experiências -->
+            <div class="mt-20">
+                <ExperienceTimeline client:load />
             </div>
         </div>
     </section>
