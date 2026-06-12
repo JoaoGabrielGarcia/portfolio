@@ -18,9 +18,11 @@ export default function HeroContent() {
                 <div className="relative">
                     <GlassEffect className="rounded-full">
                         <div className="px-5 py-2">
-                            <span className="text-xs sm:text-sm font-medium text-foreground">
-                                ✨ Disponível para oportunidades
-                            </span>
+                            <a href="https://ciandt.com/pt-br/" target="_blank" rel="noopener noreferrer">
+                                <span className="text-xs sm:text-sm font-medium text-foreground">
+                                    ✨ Estagiando na CI&T
+                                </span>
+                            </a>
                         </div>
                     </GlassEffect>
                 </div>
