@@ -6,9 +6,11 @@ interface ProjectCardProps {
     tags: string[];
     link?: string;
     image?: string;
+    semester?: string;
+    isLogo?: boolean;
 }
 
-export default function ProjectCard({ title, description, tags, link, image }: ProjectCardProps) {
+export default function ProjectCard({ title, description, tags, link, image, semester, isLogo }: ProjectCardProps) {
     return (
         <GlassEffect className="rounded-2xl w-full">
             <a
@@ -18,9 +20,9 @@ export default function ProjectCard({ title, description, tags, link, image }: P
                 className="group block w-full"
             >
                 {/* Image */}
-                <div className="aspect-video bg-black/20 flex items-center justify-center overflow-hidden rounded-t-2xl">
+                <div className={`aspect-video flex items-center justify-center overflow-hidden rounded-t-2xl relative ${isLogo ? 'bg-white/90' : 'bg-black/20'}`}>
                     {image ? (
-                        <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={image} alt={title} className={`transition-transform duration-500 group-hover:scale-105 ${isLogo ? 'w-3/4 h-3/4 object-contain' : 'w-full h-full object-cover'}`} />
                     ) : (
                         <div className="text-muted-foreground text-sm flex flex-col items-center gap-2">
                             <svg className="w-10 h-10 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -28,6 +30,11 @@ export default function ProjectCard({ title, description, tags, link, image }: P
                             </svg>
                             <span>Preview do projeto</span>
                         </div>
+                    )}
+                    {semester && (
+                        <span className="absolute top-2.5 left-2.5 px-2 py-0.5 text-xs font-mono font-medium rounded-md bg-black/60 border border-white/10 text-primary backdrop-blur-sm">
+                            {semester}
+                        </span>
                     )}
                 </div>
 
