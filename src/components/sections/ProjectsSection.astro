@@ -1,5 +1,5 @@
 ---
-import ProjectCard from "../react/ProjectCard.tsx";
+import ProjectsCarousel from "../react/ProjectsCarousel.tsx";
 
 import animusImg from "../../assets/projects/animus.png";
 import gaiaImg from "../../assets/projects/gaia.png";
@@ -78,22 +78,7 @@ const projects = [
             </p>
         </div>
 
-        <!-- Grid -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {
-                projects.map((project) => (
-                    <ProjectCard
-                        client:visible
-                        title={project.title}
-                        description={project.description}
-                        tags={project.tags}
-                        link={project.link}
-                        image={project.image}
-                        semester={project.semester}
-                        isLogo={project.isLogo}
-                    />
-                ))
-            }
-        </div>
+        <!-- Carousel -->
+        <ProjectsCarousel client:visible projects={projects} />
     </div>
 </section>
